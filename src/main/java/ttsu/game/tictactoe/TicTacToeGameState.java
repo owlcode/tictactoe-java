@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import ttsu.game.*;
+import ttsu.game.Exceptions.BadLogicException;
+import ttsu.game.Exceptions.TooLongException;
 
 public class TicTacToeGameState implements DiscreteGameState {
     public static enum Player {
@@ -16,40 +18,44 @@ public class TicTacToeGameState implements DiscreteGameState {
         }
     }
 
-    private final GameBoard board;
+    private final GameBoard gameBoard;
     private Player currentPlayer;
     private Block lastMove;
-    List<Block> availableMoves;
+
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
 
     public TicTacToeGameState() throws IllegalArgumentException {
-        board = new GameBoard(Main.DEFAULT_SIZE);
-        availableMoves = board.getOpenPositions();
+        gameBoard = new GameBoard(Main.DEFAULT_SIZE);
         currentPlayer = Player.X;
     }
 
     public TicTacToeGameState(int size, ArrayList<Point> excluded) throws TooLongException, IllegalArgumentException {
-        board = new GameBoard(size, excluded);
+        gameBoard = new GameBoard(size, excluded);
         if(Communication.startTime > Main.TIME_LIMIT) {
             throw new TooLongException();
         }
-        availableMoves = board.getOpenPositions();
         currentPlayer = Player.X;
     }
 
-    public TicTacToeGameState(GameBoard board, Player currentPlayer) {
-        validate(board, currentPlayer);
-        this.board = board;
-        availableMoves = board.getOpenPositions();
+    public TicTacToeGameState(GameBoard gameBoard, Player currentPlayer, Block lastMove) {
+        validate(gameBoard, currentPlayer);
+        this.gameBoard = gameBoard.clone();
         this.currentPlayer = currentPlayer;
+        this.lastMove = lastMove;
     }
 
+    public TicTacToeGameState clone() {
+        return new TicTacToeGameState(this.gameBoard, this.currentPlayer, this.lastMove);
+    }
 
     public HashSet<DiscreteGameState> availableStates() {
-        List<Block> availableMoves = board.getOpenPositions();
+        List<Block> availableMoves = gameBoard.getOpenPositions();
         HashSet<DiscreteGameState> availableStates = new HashSet<DiscreteGameState>(availableMoves.size());
 
         for (Block move : availableMoves) {
-            TicTacToeGameState newState = new TicTacToeGameState(this.board, this.currentPlayer);
+            TicTacToeGameState newState = new TicTacToeGameState(this.gameBoard, this.currentPlayer, this.lastMove);
             if(newState.play(move)) {
                 newState.switchPlayer();
                 availableStates.add(newState);
@@ -68,9 +74,9 @@ public class TicTacToeGameState implements DiscreteGameState {
     }
 
     public boolean hasWin(Player player) {
-        List<Block> openPositions = board.getOpenPositions();
+        List<Block> openPositions = gameBoard.getOpenPositions();
         if (openPositions.size() == 1) {
-            return currentPlayer.equals(player);
+            return getCurrentPlayer().equals(player);
         } else if (openPositions.size() == 2) {
             return openPositions.get(0).hasCommonPoint(openPositions.get(1));
         } else if (openPositions.size() == 0) {
@@ -84,9 +90,9 @@ public class TicTacToeGameState implements DiscreteGameState {
         return hasWin(Player.O) || hasWin(Player.X);
     }
 
-    private void validate(GameBoard board, Player currentPlayer) {
-        if (board == null) {
-            throw new IllegalArgumentException("board cannot be null");
+    private void validate(GameBoard gameBoard, Player currentPlayer) {
+        if (gameBoard == null) {
+            throw new IllegalArgumentException("gameBoard cannot be null");
         }
         if (currentPlayer == null) {
             throw new IllegalArgumentException("currentPlayer cannot be null");
@@ -94,16 +100,21 @@ public class TicTacToeGameState implements DiscreteGameState {
     }
 
     public boolean play(Block b) {
-        if (board.mark(b, currentPlayer)) {
+        if (currentPlayer == null) {
+            throw new IllegalArgumentException("cannot mark null player");
+        }
+
+        if (gameBoard.mark(b)) {
             lastMove = b;
             return true;
         }
+
         return false;
 
     }
 
     public GameBoard getGameBoard() {
-        return board;
+        return gameBoard;
     }
 
     public void switchPlayer() {

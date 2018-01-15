@@ -1,6 +1,9 @@
 package ttsu.game;
 
+import ttsu.game.ai.PropabilityAgent;
+
 import java.awt.*;
+import java.io.*;
 import java.util.ArrayList;
 
 public class Parser {
@@ -41,5 +44,17 @@ public class Parser {
         }
 
         return output;
+    }
+
+    public static Object detachReference(Object current) throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(current);
+        oos.flush();
+        oos.close();
+        bos.close();
+        byte[] byteData = bos.toByteArray();
+        ByteArrayInputStream bais = new ByteArrayInputStream(byteData);
+        return new ObjectInputStream(bais).readObject();
     }
 }

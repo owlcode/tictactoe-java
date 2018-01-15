@@ -1,5 +1,6 @@
 package ttsu.game;
 
+import ttsu.game.Exceptions.TooLongException;
 import ttsu.game.ai.GameIntelligenceAgent;
 import ttsu.game.ai.PropabilityAgent;
 import ttsu.game.tictactoe.TicTacToeBoardPrinter;
@@ -12,29 +13,23 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Communication {
+    private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private static GameIntelligenceAgent<TicTacToeGameState> propabilityAgent = new PropabilityAgent<TicTacToeGameState>();
+
     public static long startTime;
 
-    public static void Communication() throws IOException, InterruptedException {
+    static void Communication() throws IOException, InterruptedException, TooLongException {
         TicTacToeGameState gameState = null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         TicTacToeBoardPrinter boardPrinter = new TicTacToeBoardPrinter(System.out);
-        GameIntelligenceAgent<TicTacToeGameState> propabilityAgent = new PropabilityAgent<TicTacToeGameState>();
-
         String input;
-        int boardSize;
         ArrayList<Point> excludedPoints;
+        long startTime = System.nanoTime();
 
         input = br.readLine();
 
-        long startTime = System.nanoTime();
-
-        try {
-            boardSize = Parser.parseBoardSize(input);
-            excludedPoints = Parser.parseExcludedPoints(input);
-            gameState = new TicTacToeGameState(boardSize, excludedPoints);
-        } catch (TooLongException e) {
-            Out.err("Za duża plansza");
-        }
+        Main.BOARD_SIZE = Parser.parseBoardSize(input);
+        excludedPoints = Parser.parseExcludedPoints(input);
+        gameState = new TicTacToeGameState(Main.BOARD_SIZE, excludedPoints);
 
         if (Main.DEBUG) {
             Out.std(Watcher.timePassedMs(startTime));
@@ -51,14 +46,17 @@ public class Communication {
                 break;
             else {
                 if (input.equals("start") || input.equals("START")) {
-
+                    // Algorithm is O: O wants to win
+                    gameState.setCurrentPlayer(TicTacToeGameState.Player.O);
                     gameState = propabilityAgent.evaluateNextState(gameState);
                     Out.std(gameState.getLastMove().toString() + "\r\n");
 
                 } else {
                     Block opponentBlock = Parser.parseOpponentMove(input);
 
-                    gameState.getGameBoard().validateBlock(opponentBlock);
+                    if(!gameState.getGameBoard().validateBlock(opponentBlock)) {
+                        throw new IOException("Bad thing");
+                    }
                     gameState.play(opponentBlock);
                     gameState.switchPlayer();
 

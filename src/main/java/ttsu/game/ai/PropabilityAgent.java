@@ -1,16 +1,20 @@
 package ttsu.game.ai;
 
-import ttsu.game.DiscreteGameState;
-import ttsu.game.Main;
-import ttsu.game.Watcher;
+import ttsu.game.*;
+import ttsu.game.Exceptions.BadLogicException;
 import ttsu.game.tictactoe.TicTacToeGameState;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PropabilityAgent<T extends DiscreteGameState> implements GameIntelligenceAgent<T> {
     private TicTacToeGameState.Player initialPlayer;
     private long startTime;
+
+    public PropabilityAgent() {
+        Out.std("Starting propability Agent");
+    }
 
     private static class Node<S extends DiscreteGameState> {
         private S state;
@@ -53,8 +57,14 @@ public class PropabilityAgent<T extends DiscreteGameState> implements GameIntell
     }
 
     private PropabilityAgent.Node<T> buildTree(T state, int depth) throws Exception {
-        PropabilityAgent.Node<T> current = new PropabilityAgent.Node<T>(state);
-        List<DiscreteGameState> availableStates = new ArrayList<DiscreteGameState>(state.availableStates());
+
+        TicTacToeGameState gameStateCopy = new TicTacToeGameState(
+                state.getGameBoard().clone(),
+                state.getCurrentPlayer(),
+                state.getLastMove()
+        );
+        PropabilityAgent.Node<T> current = new PropabilityAgent.Node<T>((T) gameStateCopy);
+        List<DiscreteGameState> availableStates = new ArrayList<DiscreteGameState>(current.state.availableStates());
 
         if (availableStates.isEmpty()) {
             this.setPropabilitiesForLastGame(current);
@@ -62,9 +72,9 @@ public class PropabilityAgent<T extends DiscreteGameState> implements GameIntell
             ArrayList<PropabilityAgent.Node<T>> children = new ArrayList<PropabilityAgent.Node<T>>();
 
             for (DiscreteGameState nextState : availableStates) {
-                if (depth < 0 || (Watcher.timePassedMs(this.startTime) > Main.TIME_LIMIT && !Main.DEBUG)) {
-                    throw new Exception("too long");
-                }
+//                if (depth < 0 || (Watcher.timePassedMs(this.startTime) > Main.TIME_LIMIT && !Main.DEBUG)) {
+//                    throw new Exception("too long");
+//                }
 //                 todo: coś dziwnego chyba
 
                 PropabilityAgent.Node<T> child = buildTree((T) nextState, depth - 1);
@@ -91,7 +101,11 @@ public class PropabilityAgent<T extends DiscreteGameState> implements GameIntell
         return current;
     }
 
-    private void setPropabilitiesForLastGame(PropabilityAgent.Node<T> current) {
+    private void setPropabilitiesForLastGame(PropabilityAgent.Node<T> current) throws BadLogicException {
+        if (this.initialPlayer != TicTacToeGameState.Player.O) {
+            throw new BadLogicException();
+        }
+
         if (current.state.hasWin(this.initialPlayer)) {
             current.winningStates = 1;
             current.allStates = 1;

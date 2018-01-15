@@ -28,6 +28,11 @@ public class GameBoardTest {
     }
 
     @Test
+    public void ShouldCopy() {
+
+    }
+
+    @Test
     public void shouldBeGood() {
         // Arrange
         ArrayList<Point> except = new ArrayList<Point>();
@@ -100,13 +105,13 @@ public class GameBoardTest {
         p3 = new Point(1, 0);
         p4 = new Point(1, 1);
 
-        board.mark(new Block(p1, p2), Player.X);
+        board.mark(new Block(p1, p2));
         GameBoard newBoard = new GameBoard(board);
 
         assertThat(newBoard.isEmpty(p1)).isFalse();
         assertThat(newBoard.isEmpty(p2)).isFalse();
 
-        newBoard.mark(new Block(p3, p4), Player.O);
+        newBoard.mark(new Block(p3, p4));
 
         assertThat(newBoard.isEmpty(p3)).isFalse();
         assertThat(newBoard.isEmpty(p4)).isFalse();
@@ -138,7 +143,7 @@ public class GameBoardTest {
         Point p1, p2;
         p1 = new Point(0, 0);
         p2 = new Point(0, 1);
-        boolean success = board.mark(new Block(p1, p2), Player.O);
+        boolean success = board.mark(new Block(p1, p2));
 
         assertThat(success).isTrue();
         assertThat(board.isEmpty(p1)).isFalse();
@@ -150,8 +155,8 @@ public class GameBoardTest {
         Point p1, p2;
         p1 = new Point(0, 0);
         p2 = new Point(0, 1);
-        board.mark(new Block(p1, p2), Player.O);
-        boolean success = board.mark(new Block(p1, p2), Player.X);
+        board.mark(new Block(p1, p2));
+        boolean success = board.mark(new Block(p1, p2));
 
         assertThat(success).isFalse();
         assertThat(board.isEmpty(p1)).isFalse();
@@ -165,7 +170,7 @@ public class GameBoardTest {
         p2 = new Point(0, 1);
         thrown.expect(IllegalArgumentException.class);
         thrown.expectMessage("cannot mark null player");
-        board.mark(new Block(p1, p2), null);
+        board.mark(new Block(p1, p2));
     }
 
 //    // -- getOpenPositions
