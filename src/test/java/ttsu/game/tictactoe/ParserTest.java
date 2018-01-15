@@ -21,7 +21,7 @@ public class ParserTest {
 
     @Before
     public void setup() {
-        board = new GameBoard();
+//        board = new GameBoard();
     }
 
 //    @Test

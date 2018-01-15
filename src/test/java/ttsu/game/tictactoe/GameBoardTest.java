@@ -103,33 +103,32 @@ public class GameBoardTest {
         board.mark(new Block(p1, p2), Player.X);
         GameBoard newBoard = new GameBoard(board);
 
-        assertThat(newBoard.getMark(p1)).isEqualTo(Player.X);
-        assertThat(newBoard.getMark(p2)).isEqualTo(Player.X);
+        assertThat(newBoard.isEmpty(p1)).isFalse();
+        assertThat(newBoard.isEmpty(p2)).isFalse();
 
         newBoard.mark(new Block(p3, p4), Player.O);
 
-        assertThat(board.getMark(p3)).isNotEqualTo(Player.X);
-        assertThat(board.getMark(p4)).isNotEqualTo(Player.X);
+        assertThat(newBoard.isEmpty(p3)).isFalse();
+        assertThat(newBoard.isEmpty(p4)).isFalse();
+
     }
 
     // -- getMark
     @Test
     public void getMarkUnmarked() {
-        assertThat(board.getMark(new Point(0, 0))).isNull();
+        assertThat(board.isEmpty(new Point(0, 0))).isTrue();
     }
 
     @Test
     public void getMarkOffBoard() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("(3,3) is off the board");
-        board.getMark(new Point(3, 3));
+        board.isEmpty(new Point(3, 3));
     }
 
     @Test
     public void getMarkOffBoardNegative() {
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("(-1,0) is off the board");
-        board.getMark(new Point(-1, 0));
+        board.isEmpty(new Point(-1, 0));
     }
 
     // -- mark
@@ -142,8 +141,8 @@ public class GameBoardTest {
         boolean success = board.mark(new Block(p1, p2), Player.O);
 
         assertThat(success).isTrue();
-        assertThat(board.getMark(p1)).isEqualTo(Player.O);
-        assertThat(board.getMark(p2)).isEqualTo(Player.O);
+        assertThat(board.isEmpty(p1)).isFalse();
+        assertThat(board.isEmpty(p2)).isFalse();
     }
 
     @Test
@@ -155,8 +154,8 @@ public class GameBoardTest {
         boolean success = board.mark(new Block(p1, p2), Player.X);
 
         assertThat(success).isFalse();
-        assertThat(board.getMark(p1)).isEqualTo(Player.O);
-        assertThat(board.getMark(p2)).isEqualTo(Player.O);
+        assertThat(board.isEmpty(p1)).isFalse();
+        assertThat(board.isEmpty(p2)).isFalse();
     }
 
     @Test
@@ -171,32 +170,54 @@ public class GameBoardTest {
 
 //    // -- getOpenPositions
 //
+@Test
+public void getOpenPositionsAll() {
+    board = new GameBoard(3);
+
+    Point p1, p2, p3, p4, p5, p6, p7, p8, p9;
+    p1 = new Point(0, 0);
+    p2 = new Point(1, 0);
+    p3 = new Point(2, 0);
+    p4 = new Point(0, 1);
+    p5 = new Point(1, 1);
+    p6 = new Point(2, 1);
+    p7 = new Point(0, 2);
+    p8 = new Point(1, 2);
+    p9 = new Point(2, 2);
+
+    assertThat(board.getOpenPositions().size()).isEqualTo(12);
+    assertThat(board.getOpenPositions()).containsOnly(
+            new Block(p1, p2),
+            new Block(p2, p3),
+            new Block(p4, p5),
+            new Block(p5, p6),
+            new Block(p7, p8),
+            new Block(p8, p9),
+            new Block(p1, p4),
+            new Block(p2, p5),
+            new Block(p3, p6),
+            new Block(p4, p7),
+            new Block(p5, p8),
+            new Block(p6, p9)
+    );
+}
+
     @Test
-    public void getOpenPositionsAll() {
-        Point p1, p2, p3, p4, p5, p6, p7, p8, p9;
+    public void getOpenPositionsAllFor2Size() {
+        board = new GameBoard(2);
+
+        Point p1, p2, p3, p4;
         p1 = new Point(0, 0);
         p2 = new Point(1, 0);
-        p3 = new Point(2, 0);
-        p4 = new Point(0, 1);
-        p5 = new Point(1, 1);
-        p6 = new Point(2, 1);
-        p7 = new Point(0, 2);
-        p8 = new Point(1, 2);
-        p9 = new Point(2, 2);
+        p3 = new Point(0, 1);
+        p4 = new Point(1, 1);
 
+        assertThat(board.getOpenPositions().size()).isEqualTo(4);
         assertThat(board.getOpenPositions()).containsOnly(
                 new Block(p1, p2),
-                new Block(p2, p3),
-                new Block(p4, p5),
-                new Block(p5, p6),
-                new Block(p7, p8),
-                new Block(p8, p9),
-                new Block(p1, p4),
-                new Block(p2, p5),
-                new Block(p3, p6),
-                new Block(p4, p7),
-                new Block(p5, p8),
-                new Block(p6, p9)
+                new Block(p1, p3),
+                new Block(p3, p4),
+                new Block(p2, p4)
         );
     }
 

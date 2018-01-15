@@ -3,10 +3,11 @@ package ttsu.game;
 import ttsu.game.tictactoe.GameBoard;
 import ttsu.game.tictactoe.TicTacToeGameState;
 
+import java.util.HashSet;
 import java.util.List;
 
 public interface DiscreteGameState {
-  List<DiscreteGameState> availableStates();
+  HashSet<DiscreteGameState> availableStates();
   TicTacToeGameState.Player getCurrentPlayer();
   public GameBoard getGameBoard();
   boolean hasWin(TicTacToeGameState.Player p);

@@ -15,12 +15,12 @@ public class Parser {
         Block block;
 
         p1 = new Point(
-                Integer.parseInt(splitted[0].split("x")[0]) - (Main.COUNT_FROM_ONE ? 1 : 0),
-                Integer.parseInt(splitted[0].split("x")[1]) - (Main.COUNT_FROM_ONE ? 1 : 0)
+                Integer.parseInt(splitted[0].split("x")[0]),
+                Integer.parseInt(splitted[0].split("x")[1])
         );
         p2 = new Point(
-                Integer.parseInt(splitted[1].split("x")[0]) - (Main.COUNT_FROM_ONE ? 1 : 0),
-                Integer.parseInt(splitted[1].split("x")[1]) - (Main.COUNT_FROM_ONE ? 1 : 0)
+                Integer.parseInt(splitted[1].split("x")[0]),
+                Integer.parseInt(splitted[1].split("x")[1])
         );
 
         return new Block(p1,p2);
@@ -34,8 +34,8 @@ public class Parser {
             String[] numbers = values[i].split("x");
             output.add(
                     new Point(
-                            Integer.parseInt(numbers[0]) - (Main.COUNT_FROM_ONE ? 1 : 0),
-                            Integer.parseInt(numbers[1]) - (Main.COUNT_FROM_ONE ? 1 : 0)
+                            Integer.parseInt(numbers[0]),
+                            Integer.parseInt(numbers[1])
                     )
             );
         }

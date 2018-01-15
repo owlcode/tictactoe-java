@@ -1,5 +1,7 @@
 package ttsu.mrozu;
 
+import ttsu.game.Out;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +28,7 @@ public class Algorithm {
         if (validMoves.size() == 1) {
             gridArray.add(validMoves.get(0).a);
             gridArray.add(validMoves.get(0).b);
-            System.out.println(validMoves.get(0).a.x + " " + validMoves.get(0).a.y + " " + validMoves.get(0).b.x + " " +validMoves.get(0).b.y);
+            Out.std(validMoves.get(0).a.x + " " + validMoves.get(0).a.y + " " + validMoves.get(0).b.x + " " +validMoves.get(0).b.y);
         } else {
             for (int i = 0; i < validMoves.size(); i++) {
                 temp.addAll(gridArray);
@@ -53,7 +55,7 @@ public class Algorithm {
 
             gridArray.add(validMoves.get(x).a);
             gridArray.add(validMoves.get(x).b);
-            System.out.println(validMoves.get(x).a.x + " " + validMoves.get(x).a.y + " " + validMoves.get(x).b.x + " " + validMoves.get(x).b.y);
+            Out.std(validMoves.get(x).a.x + " " + validMoves.get(x).a.y + " " + validMoves.get(x).b.x + " " + validMoves.get(x).b.y);
         }
     }
 

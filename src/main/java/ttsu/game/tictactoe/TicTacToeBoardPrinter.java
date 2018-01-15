@@ -38,7 +38,7 @@ public class TicTacToeBoardPrinter {
 
         for (int i = 0; i < board.getSize(); i++) {
             output.add(
-                    markToString(board.getMark(new Point(row, i))));
+                    markToString(board.isEmpty(new Point(row, i))));
             str.append("%s");
 
             if (i == board.getSize() - 1) {
@@ -51,8 +51,8 @@ public class TicTacToeBoardPrinter {
         printStream.printf(str.toString(), output.toArray());
     }
 
-    private static String markToString(Player player) {
-        return player == null ? " " : player.toString();
+    private static String markToString(boolean x) {
+        return x  ? " " : "X";
     }
 
 }

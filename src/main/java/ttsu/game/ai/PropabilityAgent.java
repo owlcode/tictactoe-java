@@ -49,17 +49,12 @@ public class PropabilityAgent<T extends DiscreteGameState> implements GameIntell
             return ra.evaluateNextState(currentState);
         }
 
-        if (root.bestChild == null) {
-            RandomAgent<T> ra = new RandomAgent<T>();
-            return ra.evaluateNextState(currentState);
-        }
-
         return root.bestChild.state;
     }
 
     private PropabilityAgent.Node<T> buildTree(T state, int depth) throws Exception {
         PropabilityAgent.Node<T> current = new PropabilityAgent.Node<T>(state);
-        List<DiscreteGameState> availableStates = state.availableStates();
+        List<DiscreteGameState> availableStates = new ArrayList<DiscreteGameState>(state.availableStates());
 
         if (availableStates.isEmpty()) {
             this.setPropabilitiesForLastGame(current);

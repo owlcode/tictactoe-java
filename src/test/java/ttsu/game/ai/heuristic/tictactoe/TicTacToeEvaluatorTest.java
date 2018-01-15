@@ -54,7 +54,7 @@ public class TicTacToeEvaluatorTest {
   @Test
   public void evaluateWinConsidersAvailableMoves() {
     when(game.hasWin(Player.X)).thenReturn(true);
-    when(game.availableStates()).thenReturn(availableStates);
+//    when(game.availableStates()).thenReturn(availableStates);
     when(availableStates.size()).thenReturn(5);
     assertThat(evaluator.evaluate(game)).isEqualTo(6);
   }

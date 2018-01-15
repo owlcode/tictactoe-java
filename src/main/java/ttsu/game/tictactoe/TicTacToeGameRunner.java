@@ -3,6 +3,7 @@ package ttsu.game.tictactoe;
 import java.io.PrintStream;
 
 import ttsu.game.Block;
+import ttsu.game.Main;
 import ttsu.game.ai.GameIntelligenceAgent;
 import ttsu.game.ai.RandomAgent;
 import ttsu.game.tictactoe.TicTacToeGameState.Player;
@@ -26,17 +27,17 @@ public class TicTacToeGameRunner {
     }
 
     public void run() {
+
         printStream.println("Game is starting - randomly by " + game.getCurrentPlayer());
 
         while (!game.isOver()) {
             moveRandomlyComputer();
             game.switchPlayer();
-//            boardPrinter.printGameBoard(game.getGameBoard());
-
-            moveRandomlyComputer();
+            movePropabilityComputer();
             game.switchPlayer();
-//            boardPrinter.printGameBoard(game.getGameBoard());
+            boardPrinter.printGameBoard(game.getGameBoard());
         }
+
         printGameOver();
     }
 
@@ -54,6 +55,9 @@ public class TicTacToeGameRunner {
             return;
         }
         Block nextMove = state.getLastMove();
+        if(nextMove == null) {
+            return;
+        }
         game.play(nextMove);
     }
 

@@ -2,7 +2,7 @@ package ttsu.game;
 
 import java.awt.*;
 
-public final class Block {
+public final class Block implements java.io.Serializable {
     public final Point a;
     public final Point b;
 
@@ -19,10 +19,6 @@ public final class Block {
         return a.distance(b) == 1.0;
     }
 
-//    public boolean isInsideBoard() {
-//        return a.x >= 0 && a.x < Main.X && b.x >= 0 && b.y < Main.Y;
-//    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -36,15 +32,23 @@ public final class Block {
     }
 
     @Override
-    public int hashCode() {
-        return a.hashCode() + b.hashCode();
+    public String toString() {
+        return (this.a.x) + "x" + (this.a.y) + "_" +
+                (this.b.x) + "x" + (this.b.y);
     }
 
-    @Override
-    public String toString() {
-        return (this.a.x + (Main.COUNT_FROM_ONE ? 1 : 0)) + "x" +
-                (this.a.y + (Main.COUNT_FROM_ONE ? 1 : 0)) + "_" +
-                (this.b.x + (Main.COUNT_FROM_ONE ? 1 : 0)) + "x" +
-                (this.b.y + (Main.COUNT_FROM_ONE ? 1 : 0));
+    public Block fromString(String str) {
+        String[] points = str.split("_");
+
+        return new Block(
+                new Point(
+                        Integer.parseInt(points[0].split("x")[0]),
+                        Integer.parseInt(points[0].split("x")[1])
+                ),
+                new Point(
+                        Integer.parseInt(points[1].split("x")[0]),
+                        Integer.parseInt(points[1].split("x")[1])
+                )
+        );
     }
 }

@@ -2,11 +2,10 @@ package ttsu.game.tictactoe;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
-import ttsu.game.Block;
-import ttsu.game.DiscreteGameState;
-import ttsu.game.Main;
+import ttsu.game.*;
 
 public class TicTacToeGameState implements DiscreteGameState {
     public static enum Player {
@@ -22,14 +21,17 @@ public class TicTacToeGameState implements DiscreteGameState {
     private Block lastMove;
     List<Block> availableMoves;
 
-    public TicTacToeGameState() {
+    public TicTacToeGameState() throws IllegalArgumentException {
         board = new GameBoard(Main.DEFAULT_SIZE);
         availableMoves = board.getOpenPositions();
         currentPlayer = Player.X;
     }
 
-    public TicTacToeGameState(int size, ArrayList<Point> excluded) {
+    public TicTacToeGameState(int size, ArrayList<Point> excluded) throws TooLongException, IllegalArgumentException {
         board = new GameBoard(size, excluded);
+        if(Communication.startTime > Main.TIME_LIMIT) {
+            throw new TooLongException();
+        }
         availableMoves = board.getOpenPositions();
         currentPlayer = Player.X;
     }
@@ -41,22 +43,17 @@ public class TicTacToeGameState implements DiscreteGameState {
         this.currentPlayer = currentPlayer;
     }
 
-    public TicTacToeGameState(TicTacToeGameState other) {
-        this.board = new GameBoard(other.board);
-        this.currentPlayer = other.getCurrentPlayer();
-        availableMoves = board.getOpenPositions();
-        this.lastMove = other.lastMove;
-    }
 
-    public List<DiscreteGameState> availableStates() {
+    public HashSet<DiscreteGameState> availableStates() {
         List<Block> availableMoves = board.getOpenPositions();
-        List<DiscreteGameState> availableStates = new ArrayList<DiscreteGameState>(availableMoves.size());
+        HashSet<DiscreteGameState> availableStates = new HashSet<DiscreteGameState>(availableMoves.size());
 
         for (Block move : availableMoves) {
-            TicTacToeGameState newState = new TicTacToeGameState(this);
-            newState.play(move);
-            newState.switchPlayer();
-            availableStates.add(newState);
+            TicTacToeGameState newState = new TicTacToeGameState(this.board, this.currentPlayer);
+            if(newState.play(move)) {
+                newState.switchPlayer();
+                availableStates.add(newState);
+            }
         }
 
         return availableStates;
@@ -87,16 +84,6 @@ public class TicTacToeGameState implements DiscreteGameState {
         return hasWin(Player.O) || hasWin(Player.X);
     }
 
-    private boolean play(Point a, Point b) {
-        Block block = new Block(a, b);
-        if (board.mark(block, currentPlayer)) {
-            lastMove = block;
-            return true;
-        }
-        return false;
-
-    }
-
     private void validate(GameBoard board, Player currentPlayer) {
         if (board == null) {
             throw new IllegalArgumentException("board cannot be null");
@@ -107,7 +94,12 @@ public class TicTacToeGameState implements DiscreteGameState {
     }
 
     public boolean play(Block b) {
-        return play(b.a, b.b);
+        if (board.mark(b, currentPlayer)) {
+            lastMove = b;
+            return true;
+        }
+        return false;
+
     }
 
     public GameBoard getGameBoard() {

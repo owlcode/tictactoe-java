@@ -1,13 +1,9 @@
 package ttsu.game;
 
 import ttsu.game.ai.GameIntelligenceAgent;
-import ttsu.game.ai.MinimaxAgent;
 import ttsu.game.ai.PropabilityAgent;
-import ttsu.game.ai.RandomAgent;
-import ttsu.game.ai.heuristic.tictactoe.TicTacToeEvaluator;
 import ttsu.game.tictactoe.TicTacToeBoardPrinter;
 import ttsu.game.tictactoe.TicTacToeGameState;
-import ttsu.mrozu.Algorithm;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,12 +12,14 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Communication {
+    public static long startTime;
+
     public static void Communication() throws IOException, InterruptedException {
         TicTacToeGameState gameState = null;
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         TicTacToeBoardPrinter boardPrinter = new TicTacToeBoardPrinter(System.out);
         GameIntelligenceAgent<TicTacToeGameState> propabilityAgent = new PropabilityAgent<TicTacToeGameState>();
-        
+
         String input;
         int boardSize;
         ArrayList<Point> excludedPoints;
@@ -30,15 +28,19 @@ public class Communication {
 
         long startTime = System.nanoTime();
 
-        boardSize = Parser.parseBoardSize(input);
-        excludedPoints = Parser.parseExcludedPoints(input);
-        gameState = new TicTacToeGameState(boardSize, excludedPoints);
-
-        if(Main.DEBUG) {
-            System.out.println(Watcher.timePassedMs(startTime));
+        try {
+            boardSize = Parser.parseBoardSize(input);
+            excludedPoints = Parser.parseExcludedPoints(input);
+            gameState = new TicTacToeGameState(boardSize, excludedPoints);
+        } catch (TooLongException e) {
+            Out.err("Za duża plansza");
         }
 
-        System.out.println("OK");
+        if (Main.DEBUG) {
+            Out.std(Watcher.timePassedMs(startTime));
+        }
+
+        Out.std("OK\r\n");
 
         while (true) {
             input = br.readLine();
@@ -51,22 +53,23 @@ public class Communication {
                 if (input.equals("start") || input.equals("START")) {
 
                     gameState = propabilityAgent.evaluateNextState(gameState);
-                    System.out.println(gameState.getLastMove().toString());
+                    Out.std(gameState.getLastMove().toString() + "\r\n");
 
                 } else {
                     Block opponentBlock = Parser.parseOpponentMove(input);
 
+                    gameState.getGameBoard().validateBlock(opponentBlock);
                     gameState.play(opponentBlock);
                     gameState.switchPlayer();
 
                     gameState = propabilityAgent.evaluateNextState(gameState);
-                    System.out.println(gameState.getLastMove().toString());
+                    Out.std(gameState.getLastMove().toString() + "\r\n");
                 }
             }
 
             if (Main.DEBUG) {
                 boardPrinter.printGameBoard(gameState.getGameBoard());
-                System.out.println("Time: " + Watcher.timePassedMs(startTime));
+                Out.std("Time: " + Watcher.timePassedMs(startTime));
             }
         }
     }

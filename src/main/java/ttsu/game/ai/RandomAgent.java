@@ -2,13 +2,15 @@ package ttsu.game.ai;
 
 import ttsu.game.DiscreteGameState;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
 public class RandomAgent<T extends DiscreteGameState> implements GameIntelligenceAgent<T> {
 
     public T evaluateNextState(T currentState) {
-        List<DiscreteGameState> availableStates = currentState.availableStates();
+        ArrayList<DiscreteGameState> availableStates = new ArrayList<DiscreteGameState>(currentState.availableStates());
         Random random = new Random();
 
         int size = availableStates.size();
