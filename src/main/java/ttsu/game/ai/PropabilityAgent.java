@@ -12,10 +12,6 @@ public class PropabilityAgent<T extends DiscreteGameState> implements GameIntell
     private TicTacToeGameState.Player initialPlayer;
     private long startTime;
 
-    public PropabilityAgent() {
-        Out.std("Starting propability Agent");
-    }
-
     private static class Node<S extends DiscreteGameState> {
         private S state;
         private int winningStates = 0;
@@ -72,9 +68,9 @@ public class PropabilityAgent<T extends DiscreteGameState> implements GameIntell
             ArrayList<PropabilityAgent.Node<T>> children = new ArrayList<PropabilityAgent.Node<T>>();
 
             for (DiscreteGameState nextState : availableStates) {
-//                if (depth < 0 || (Watcher.timePassedMs(this.startTime) > Main.TIME_LIMIT && !Main.DEBUG)) {
-//                    throw new Exception("too long");
-//                }
+                if (depth < 0 || (Watcher.timePassedMs(this.startTime) > Main.TIME_LIMIT)) {
+                    throw new Exception("too long");
+                }
 //                 todo: coś dziwnego chyba
 
                 PropabilityAgent.Node<T> child = buildTree((T) nextState, depth - 1);
@@ -106,15 +102,16 @@ public class PropabilityAgent<T extends DiscreteGameState> implements GameIntell
             throw new BadLogicException();
         }
 
-        if (current.state.hasWin(this.initialPlayer)) {
-            current.winningStates = 1;
-            current.allStates = 1;
-            current.bestChild = current;
-        } else {
+        if(current.state.getCurrentPlayer() == TicTacToeGameState.Player.O) {
             current.winningStates = 0;
             current.allStates = 1;
             current.bestChild = null;
+        } else {
+            current.winningStates = 1;
+            current.allStates = 1;
+            current.bestChild = current;
         }
+
         current.children = null;
     }
 }

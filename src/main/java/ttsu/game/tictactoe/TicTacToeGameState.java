@@ -27,7 +27,7 @@ public class TicTacToeGameState implements DiscreteGameState {
     }
 
     public TicTacToeGameState() throws IllegalArgumentException {
-        gameBoard = new GameBoard(Main.DEFAULT_SIZE);
+        gameBoard = new GameBoard();
         currentPlayer = Player.X;
     }
 
@@ -52,7 +52,7 @@ public class TicTacToeGameState implements DiscreteGameState {
 
     public HashSet<DiscreteGameState> availableStates() {
         List<Block> availableMoves = gameBoard.getOpenPositions();
-        HashSet<DiscreteGameState> availableStates = new HashSet<DiscreteGameState>(availableMoves.size());
+        HashSet<DiscreteGameState> availableStates = new HashSet<DiscreteGameState>();
 
         for (Block move : availableMoves) {
             TicTacToeGameState newState = new TicTacToeGameState(this.gameBoard, this.currentPlayer, this.lastMove);

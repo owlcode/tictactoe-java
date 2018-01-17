@@ -12,7 +12,7 @@ public class Main {
     public static int DEFAULT_SIZE = 5;
     public static int PROP_DEPTH = 100;
     public static long TIME_LIMIT = 200;
-    public static int BOARD_SIZE;
+    public static int BOARD_SIZE = 4;
     public static Map<
             String,
             List<Block>

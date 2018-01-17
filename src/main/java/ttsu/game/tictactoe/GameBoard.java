@@ -13,7 +13,7 @@ import ttsu.game.tictactoe.TicTacToeGameState.Player;
 public class GameBoard {
     private final HashSet<Point> board;
 
-    GameBoard(int size) {
+    GameBoard() {
         board = new HashSet<Point>();
     }
 
@@ -33,11 +33,31 @@ public class GameBoard {
         board = new HashSet<Point>(other.board);
     }
 
+    List<Block> getOpenPositions() throws IllegalArgumentException {
+        ArrayList<Block> blocks;
+
+//        if(this.board != null && Main.cache.containsKey(GameBoardKey())) {
+//            return Main.cache.get(GameBoardKey());
+//        }
+
+        blocks = hardLifting();
+
+        String key = GameBoardKey();
+//        Main.cache.put(key, blocks);
+        return blocks;
+    }
+
+    public String GameBoardKey() {
+        return this.board.toString() + Main.BOARD_SIZE;
+    }
+
     boolean mark(Block b) {
-        validateBlock(b);
-        board.add(b.a);
-        board.add(b.b);
-        return true;
+        if(validateBlock(b)) {
+            board.add(b.a);
+            board.add(b.b);
+            return true;
+        }
+        return false;
     }
 
 
@@ -48,59 +68,12 @@ public class GameBoard {
         return !board.contains(point);
     }
 
-    List<Block> getOpenPositions() throws IllegalArgumentException {
-        ArrayList<Block> blocks;
-
-        if(this.board != null && Main.cache.containsKey(GameBoardKey())) {
-            return Main.cache.get(GameBoardKey());
-        }
-
-        blocks = hardLifting();
-
-        String key = GameBoardKey();
-        Main.cache.put(key, blocks);
-        return blocks;
-    }
-
-    public String GameBoardKey() {
-        return this.board.toString() + Main.BOARD_SIZE;
-    }
-
-    @Override
-    public String toString() {
-        return board.toString();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof GameBoard)) {
-            return false;
-        }
-        GameBoard other = (GameBoard) obj;
-        other.board.equals(((GameBoard) obj).board);
-        return true;
-    }
-
     public boolean validateBlock(Block p) {
-        for (Point point : board) {
-            if (point.equals(p.a) || point.equals(p.b)) {
-                return false;
-            }
-        }
         return p.isConsistent() && isEmpty(p.a) && isEmpty(p.b);
     }
 
     private boolean isInsideBoard(Point p) {
         return p.x >= 0 && p.x < Main.BOARD_SIZE && p.y >= 0 && p.y < Main.BOARD_SIZE;
-    }
-
-    private void validate(Player[][] board) {
-        if (board == null) {
-            throw new IllegalArgumentException("board cannot be null");
-        }
     }
 
     private ArrayList<Point> neighbourPoints(Point point) {
@@ -143,5 +116,22 @@ public class GameBoard {
 //        }
 
         return blocks;
+    }
+
+    @Override
+    public String toString() {
+        return board.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof GameBoard)) {
+            return false;
+        }
+        GameBoard other = (GameBoard) obj;
+        return other.board.equals(((GameBoard) obj).board);
     }
 }

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import ttsu.game.Block;
+import ttsu.game.Main;
 import ttsu.game.tictactoe.GameBoard;
 import ttsu.game.tictactoe.TicTacToeGameState.Player;
 
@@ -24,7 +25,8 @@ public class GameBoardTest {
 
     @Before
     public void setup() {
-        board = new GameBoard(3);
+        Main.BOARD_SIZE = 3;
+        board = new GameBoard();
     }
 
     @Test
@@ -159,17 +161,15 @@ public class GameBoardTest {
         boolean success = board.mark(new Block(p1, p2));
 
         assertThat(success).isFalse();
-        assertThat(board.isEmpty(p1)).isFalse();
-        assertThat(board.isEmpty(p2)).isFalse();
     }
 
     @Test
-    public void markNull() {
+    public void markOffBoard() {
         Point p1, p2;
-        p1 = new Point(0, 0);
-        p2 = new Point(0, 1);
+        p1 = new Point(4, 0);
+        p2 = new Point(4, 1);
+
         thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("cannot mark null player");
         board.mark(new Block(p1, p2));
     }
 
@@ -177,7 +177,7 @@ public class GameBoardTest {
 //
 @Test
 public void getOpenPositionsAll() {
-    board = new GameBoard(3);
+    board = new GameBoard();
 
     Point p1, p2, p3, p4, p5, p6, p7, p8, p9;
     p1 = new Point(0, 0);
@@ -209,7 +209,8 @@ public void getOpenPositionsAll() {
 
     @Test
     public void getOpenPositionsAllFor2Size() {
-        board = new GameBoard(2);
+        Main.BOARD_SIZE = 2;
+        board = new GameBoard();
 
         Point p1, p2, p3, p4;
         p1 = new Point(0, 0);
