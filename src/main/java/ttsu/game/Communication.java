@@ -40,36 +40,32 @@ public class Communication {
         while (true) {
             input = br.readLine();
 
-            startTime = System.nanoTime();
-
             if (input.equals("stop") || input.equals("STOP"))
                 break;
-            else {
-                if (input.equals("start") || input.equals("START")) {
-                    // Algorithm is O: O wants to win
-                    gameState.setCurrentPlayer(TicTacToeGameState.Player.O);
-                    gameState = propabilityAgent.evaluateNextState(gameState);
-                    Out.std(gameState.getLastMove().toString() + "\r\n");
+            else if (input.equals("start") || input.equals("START")) {
+                // Algorithm is O: O wants to win
+                gameState.setCurrentPlayer(TicTacToeGameState.Player.O);
+                gameState = propabilityAgent.evaluateNextState(gameState);
+                Out.std(gameState.getLastMove().toString() + "\r\n");
 
-                } else {
-                    Block opponentBlock = Parser.parseOpponentMove(input);
+            } else {
+                Block opponentBlock = Parser.parseOpponentMove(input);
 
-                    if(!gameState.getGameBoard().validateBlock(opponentBlock)) {
-                        throw new IOException("Bad thing");
-                    }
-                    gameState.play(opponentBlock);
-                    gameState.switchPlayer();
-
-                    gameState = propabilityAgent.evaluateNextState(gameState);
-                    Out.std(gameState.getLastMove().toString() + "\r\n");
+                if (!gameState.getGameBoard().validateBlock(opponentBlock)) {
+                    continue;
                 }
-            }
+                gameState.play(opponentBlock);
+                gameState.switchPlayer();
 
-            if (Main.DEBUG) {
-                boardPrinter.printGameBoard(gameState.getGameBoard());
-                Out.std("Time: " + Watcher.timePassedMs(startTime));
+                gameState = propabilityAgent.evaluateNextState(gameState);
+                Out.std(gameState.getLastMove().toString() + "\r\n");
             }
         }
-    }
 
+        if (Main.DEBUG) {
+            boardPrinter.printGameBoard(gameState.getGameBoard());
+            Out.std("Time: " + Watcher.timePassedMs(startTime));
+        }
+    }
 }
+

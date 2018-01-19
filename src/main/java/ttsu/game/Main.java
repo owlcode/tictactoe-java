@@ -11,7 +11,7 @@ public class Main {
     static boolean DEBUG = false;
     public static int DEFAULT_SIZE = 5;
     public static int PROP_DEPTH = 100;
-    public static long TIME_LIMIT = 200;
+    public static long TIME_LIMIT = 250;
     public static int BOARD_SIZE = 4;
     public static Map<
             String,
@@ -26,15 +26,16 @@ public class Main {
 
         try {
             Communication.Communication();
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             System.err.println("Wrong argument: \r\n" + Arrays.toString(e.getStackTrace()));
-        } catch (IOException e) {
-            System.err.println("IO Exception: \r\n" + Arrays.toString(e.getStackTrace()));
-        } catch (TooLongException e) {
-            Out.err("TOO LOONG");
-        } catch (InterruptedException e) {
-            Out.err("Interrupted");
         }
+//        } catch (IOException e) {
+//            System.err.println("IO Exception: \r\n" + Arrays.toString(e.getStackTrace()));
+//        } catch (TooLongException e) {
+//            Out.err("TOO LOONG");
+//        } catch (InterruptedException e) {
+//            Out.err("Interrupted");
+//        }
 
 //        serialize();
     }

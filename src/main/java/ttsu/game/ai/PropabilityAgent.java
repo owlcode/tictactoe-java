@@ -71,7 +71,6 @@ public class PropabilityAgent<T extends DiscreteGameState> implements GameIntell
                 if (depth < 0 || (Watcher.timePassedMs(this.startTime) > Main.TIME_LIMIT)) {
                     throw new Exception("too long");
                 }
-//                 todo: coś dziwnego chyba
 
                 PropabilityAgent.Node<T> child = buildTree((T) nextState, depth - 1);
                 children.add(child);
